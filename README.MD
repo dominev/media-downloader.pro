@@ -346,5 +346,5 @@ of this software and associated documentation files...
 | **GitHub Issues**     |Создать обращение
 | **Email**  |amilastie@gmail.com |
 |             |ipicuous@gmail.com |
+| **Telegram**  |t.me/nevidomoff |
 
-| **Telegram**        |t.me/nevidomoff |
