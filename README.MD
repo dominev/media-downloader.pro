@@ -4,7 +4,7 @@
   
   <p>
     <img src="https://img.shields.io/badge/Python-3.9+-blue.svg">
-    <img src="https://img.shields.io/badge/Platform-Windows%20|%20macOS%20|%20Linux-green.svg">
+    <img src="https://img.shields.io/badge/Platform-Windows%20-green.svg">
     <img src="https://img.shields.io/badge/License-MIT-orange.svg">
     <img src="https://img.shields.io/badge/FFmpeg-Auto%20Install-purple.svg">
   </p>
