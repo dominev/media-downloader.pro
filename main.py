@@ -144,17 +144,6 @@ def main():
     # Проверяем FFmpeg
     has_ffmpeg = check_system_ffmpeg()
 
-    # Если FFmpeg не найден, запускаем фоновое скачивание
-    if not has_ffmpeg:
-        print("⚠️ FFmpeg не найден. Будет скачан автоматически в фоновом режиме.")
-        print("   Программа продолжит работу, а FFmpeg установится параллельно.")
-
-        # Запускаем скачивание в отдельном потоке
-        ffmpeg_thread = threading.Thread(target=download_ffmpeg_background, daemon=True)
-        ffmpeg_thread.start()
-    else:
-        print("✅ FFmpeg уже установлен")
-
     # Создаём необходимые директории
     from config import DEFAULT_DOWNLOAD_DIR
     DEFAULT_DOWNLOAD_DIR.mkdir(exist_ok=True)

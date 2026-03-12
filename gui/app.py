@@ -138,13 +138,13 @@ class DownloaderApp(ctk.CTk):
         version.pack(side="left", padx=5)
 
         # Индикатор FFmpeg
-        ffmpeg_status = ctk.CTkLabel(
+        self.ffmpeg_status_label = ctk.CTkLabel(
             header_frame,
             text="✅ FFmpeg" if self.has_ffmpeg else "⚠️ FFmpeg",
             font=ctk.CTkFont(size=12),
             text_color="green" if self.has_ffmpeg else "orange"
         )
-        ffmpeg_status.pack(side="right", padx=5)
+        self.ffmpeg_status_label.pack(side="right", padx=5)
 
     def create_url_input(self):
         """Создает поле ввода URL"""
@@ -584,8 +584,8 @@ class DownloaderApp(ctk.CTk):
             return
 
         if messagebox.askyesno(
-            "Очистка",
-            "Очистить очередь и лог?"
+                "Очистка",
+                "Очистить очередь и лог?"
         ):
             self.queue_frame.clear_queue()
             self.log_viewer.clear()
@@ -623,9 +623,11 @@ class DownloaderApp(ctk.CTk):
         """Проверяет FFmpeg при запуске и предлагает скачать если отсутствует"""
         if self.has_ffmpeg:
             self.logger.info("✅ FFmpeg найден в системе")
+            self.update_ffmpeg_status_display()  # Обновляем статус при запуске
             return
 
         self.logger.warning("⚠️ FFmpeg не найден. Некоторые функции могут работать ограниченно.")
+        self.update_ffmpeg_status_display()  # Обновляем статус при запуске
 
         # Спрашиваем пользователя
         answer = messagebox.askyesno(
@@ -692,8 +694,8 @@ class DownloaderApp(ctk.CTk):
                     # Обновляем настройки загрузчиков
                     self.update_downloaders_ffmpeg()
 
-                    # Обновляем цвет кнопки
-                    self.ffmpeg_btn.configure(fg_color="green")
+                    # Обновляем отображение статуса FFmpeg
+                    self.after(0, self.update_ffmpeg_status_display)
 
                     # Даем время увидеть сообщение об успехе
                     self.after(2000, progress.close)
@@ -705,12 +707,19 @@ class DownloaderApp(ctk.CTk):
                         set_detailed_status("Готов к использованию")
                         self.has_ffmpeg = True
                         self.logger.success("✅ FFmpeg уже был установлен")
-                        self.ffmpeg_btn.configure(fg_color="green")
+
+                        # Обновляем отображение статуса FFmpeg
+                        self.after(0, self.update_ffmpeg_status_display)
+
                         self.after(2000, progress.close)
                     else:
                         set_status("❌ Ошибка при установке FFmpeg")
                         set_detailed_status("Проверьте подключение к интернету")
                         self.logger.error("❌ Не удалось установить FFmpeg")
+
+                        # Обновляем отображение статуса FFmpeg
+                        self.after(0, self.update_ffmpeg_status_display)
+
                         self.after(3000, progress.close)
 
             except Exception as e:
@@ -720,12 +729,19 @@ class DownloaderApp(ctk.CTk):
                     set_detailed_status("Готов к использованию")
                     self.has_ffmpeg = True
                     self.logger.success("✅ FFmpeg успешно установлен")
-                    self.ffmpeg_btn.configure(fg_color="green")
+
+                    # Обновляем отображение статуса FFmpeg
+                    self.after(0, self.update_ffmpeg_status_display)
+
                     self.after(2000, progress.close)
                 else:
                     set_status(f"❌ Ошибка: {str(e)}")
                     set_detailed_status("Произошла непредвиденная ошибка")
                     self.logger.error(f"❌ Ошибка при установке FFmpeg: {e}")
+
+                    # Обновляем отображение статуса FFmpeg
+                    self.after(0, self.update_ffmpeg_status_display)
+
                     self.after(3000, progress.close)
 
         # Запускаем скачивание в отдельном потоке
@@ -773,6 +789,29 @@ class DownloaderApp(ctk.CTk):
             text=f"{status} | В очереди: {queue_count} | {ffmpeg_status}"
         )
 
+    def update_ffmpeg_status_display(self):
+        """Обновляет отображение статуса FFmpeg в заголовке"""
+        if hasattr(self, 'ffmpeg_status_label'):
+            if self.has_ffmpeg:
+                self.ffmpeg_status_label.configure(
+                    text="✅ FFmpeg",
+                    text_color="green"
+                )
+            else:
+                self.ffmpeg_status_label.configure(
+                    text="⚠️ FFmpeg",
+                    text_color="orange"
+                )
+
+        # Также обновляем кнопку FFmpeg
+        if hasattr(self, 'ffmpeg_btn'):
+            self.ffmpeg_btn.configure(
+                fg_color="green" if self.has_ffmpeg else "purple"
+            )
+
+        # Обновляем строку состояния
+        self.update_status_bar()
+
     def update_status_loop(self):
         """Периодически обновляет строку состояния"""
         self.update_status_bar()
@@ -782,8 +821,8 @@ class DownloaderApp(ctk.CTk):
         """Обработка закрытия окна"""
         if self.running:
             if not messagebox.askyesno(
-                "Выход",
-                "Загрузка ещё выполняется. Прервать и выйти?"
+                    "Выход",
+                    "Загрузка ещё выполняется. Прервать и выйти?"
             ):
                 return
             self.stop_downloads()
