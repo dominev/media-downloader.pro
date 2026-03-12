@@ -7,7 +7,6 @@ BASE_DIR = Path(__file__).parent
 # Директория для загрузок по умолчанию
 DEFAULT_DOWNLOAD_DIR = BASE_DIR / "downloads"
 
-# Настройки приложения
 APP_NAME = "Media Downloader Pro"
 APP_VERSION = "1.0.0"
 APP_GEOMETRY = "900x700"  # Ширина x Высота
